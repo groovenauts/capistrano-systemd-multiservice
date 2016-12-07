@@ -9,8 +9,8 @@ Gem::Specification.new do |spec|
   spec.authors       = ["YAMADA Tsuyoshi"]
   spec.email         = ["tyamada@minimum2scp.org"]
 
-  spec.summary       = %q{TODO: Write a short summary, because Rubygems requires one.}
-  spec.description   = %q{TODO: Write a longer description or delete this line.}
+  spec.summary       = %q{Capistrano Plugin to control services by systemd}
+  spec.description   = %q{Capistrano Plugin to control services by systemd}
   spec.homepage      = "TODO: Put your gem's website or public repo URL here."
 
   # Prevent pushing this gem to RubyGems.org. To allow pushes either set the 'allowed_push_host'
