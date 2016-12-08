@@ -5,7 +5,7 @@ require 'capistrano/systemd/multiservice/version'
 
 Gem::Specification.new do |spec|
   spec.name          = "capistrano-systemd-multiservice"
-  spec.version       = Capistrano::Systemd::Multiservice::VERSION
+  spec.version       = Capistrano::Systemd::MultiService::VERSION
   spec.authors       = ["YAMADA Tsuyoshi"]
   spec.email         = ["tyamada@minimum2scp.org"]
 
