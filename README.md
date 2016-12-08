@@ -28,8 +28,8 @@ install_plugin Capistrano::Systemd::MultiService.new("example1")
 install_plugin Capistrano::Systemd::MultiService.new("example2")
 ```
 
-And put `config/systemd/example1.service.erb` (and `config/systemd/example2.service.erb`, ...) like this:
-(see [systemd.service(5)](https://www.freedesktop.org/software/systemd/man/systemd.service.html) for details)
+And put `config/systemd/example1.service.erb` (and `config/systemd/example2.service.erb`, ...) like this
+(see [systemd.service(5)](https://www.freedesktop.org/software/systemd/man/systemd.service.html) for details) :
 
 ```
 [Unit]
@@ -47,7 +47,7 @@ Group = examplegroup
 WantedBy = multi-user.target
 ```
 
-And add these lines to config/deploy.rb (if you want reload/restart services):
+And add these lines to config/deploy.rb (if you want to reload/restart services on deploy):
 
 ```ruby
 after 'deploy:publishing', 'systemd:example1:restart'
@@ -83,7 +83,7 @@ following tasks are defined.
 
 ## Systemd template unit file support
 
-TBD...
+TBD... (No document is better than no code, see spec/capistrano/systemd/multiservice\_spec.rb)
 
 ## Configuration Variables
 
@@ -98,11 +98,13 @@ following Configuration variables are defined.
 - `:systemd_example1_service`
 - `:systemd_example1_instance_services`
 
+TBD... (No document is better than no code, see lib/capistrano/systemd/multiservice.rb)
+
 ## Examples
 
 ### Rails application with unicorn and delayed\_job
 
-TBD...
+TBD... (No document is better than no code)
 
 ## Development
 
