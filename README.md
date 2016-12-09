@@ -47,17 +47,17 @@ Group = examplegroup
 WantedBy = multi-user.target
 ```
 
-And add these lines to config/deploy.rb (if you want to reload/restart services on deploy):
+And add these lines to config/deploy.rb if you want to reload/restart services on deploy:
 
 ```ruby
 after 'deploy:publishing', 'systemd:example1:restart'
 after 'deploy:publishing', 'systemd:example2:reload-or-restart'
 ```
 
-And deploy.
+And then deploy.
 
 ```shell
-# Install systemd service unit files before deploy
+# Upload and install systemd service unit files before deploy
 cap STAGE systemd:example1:setup systemd:example2:setup
 
 # Deploy as usual
@@ -81,9 +81,7 @@ following tasks are defined.
 - `systemd:example1:enable`
 - `systemd:example1:disable`
 
-## Systemd template unit file support
-
-TBD... (No document is better than no code, see spec/capistrano/systemd/multiservice\_spec.rb)
+See lib/capistrano/tasks/systemd/multiservice.rake, lib/capistrano/systemd/multiservice.rb for details.
 
 ## Configuration Variables
 
@@ -98,7 +96,7 @@ following Configuration variables are defined.
 - `:systemd_example1_service`
 - `:systemd_example1_instance_services`
 
-TBD... (No document is better than no code, see lib/capistrano/systemd/multiservice.rb)
+See lib/capistrano/systemd/multiservice.rb for details.
 
 ## Examples
 
