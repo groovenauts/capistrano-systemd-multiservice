@@ -104,7 +104,154 @@ TBD... (No document is better than no code, see lib/capistrano/systemd/multiserv
 
 ### Rails application with unicorn and delayed\_job
 
-TBD... (No document is better than no code)
+#### `Capfile`
+
+```ruby
+## ...snip...
+
+require 'capistrano/systemd/multiservice'
+install_plugin Capistrano::Systemd::MultiService.new('unicorn')
+install_plugin Capistrano::Systemd::MultiService.new('delayed_job')
+
+## ...snip...
+```
+
+#### `config/deploy.rb`
+
+```ruby
+## ...snip...
+
+set :systemd_delayed_job_instances, ->{ 3.times.to_a }
+
+after 'deploy:restart', 'systemd:unicorn:reload-or-restart'
+after 'deploy:restart', 'systemd:delayed_job:restart'
+
+after 'deploy:publishing', 'deploy:restart'
+
+## ...snip...
+```
+
+#### `config/systemd/unicorn.service.erb`
+
+```
+[Unit]
+Description = <%= fetch(:application) %> unicorn rack server
+
+[Service]
+Environment = PATH=<%= fetch(:rbenv_path) %>/shims:/usr/local/bin:/usr/bin:/bin
+Environment = RBENV_VERSION=<%= fetch(:rbenv_ruby) %>
+Environment = RBENV_ROOT=<%= fetch(:rbenv_path) %>
+Environment = RAILS_ENV=<%= fetch(:rails_env) %>
+Environment = PWD=<%= current_path %>
+
+WorkingDirectory = <%= current_path %>
+
+ExecStart = <%= fetch(:rbenv_path) %>/bin/rbenv exec bundle exec unicorn -c <%= current_path %>/config/unicorn.rb
+ExecReload = /bin/kill -USR2 $MAINPID
+
+PIDFile = <%= shared_path %>/tmp/pids/unicorn.pid
+KillSignal = SIGQUIT
+KillMode = process
+TimeoutStopSec = 62
+Restart = always
+
+User = app-user
+Group = app-group
+
+[Install]
+WantedBy = multi-user.target
+```
+
+#### `config/systemd/delayed_job.service.erb`
+
+```
+[Unit]
+Description = <%= fetch(:application) %> delayed_job
+Requires = <%= fetch(:"#{prefix}_instance_services").join(" ") %>
+
+[Service]
+Type = oneshot
+RemainAfterExit = yes
+ExecStart  = /bin/true
+ExecReload = /bin/true
+
+[Install]
+WantedBy = multi-user.target
+```
+
+#### `config/systemd/delayed_job@.service.erb`
+
+```
+[Unit]
+Description = <%= fetch(:application) %> delayed_job (instance %i)
+PartOf = <%= fetch(:"#{prefix}_service") %>
+ReloadPropagatedFrom = <%= fetch(:"#{prefix}_service") %>
+
+[Service]
+Type = forking
+
+Environment = PATH=<%= fetch(:rbenv_path) %>/shims:/usr/local/bin:/usr/bin:/bin
+Environment = RBENV_VERSION=<%= fetch(:rbenv_ruby) %>
+Environment = RBENV_ROOT=<%= fetch(:rbenv_path) %>
+Environment = RAILS_ENV=<%= fetch(:rails_env) %>
+Environment = PWD=<%= current_path %>
+
+WorkingDirectory = <%= current_path %>
+
+ExecStart  = <%= fetch(:rbenv_path) %>/bin/rbenv exec bundle exec bin/delayed_job -p <%= fetch(:application) %> -i %i start
+ExecStop   = <%= fetch(:rbenv_path) %>/bin/rbenv exec bundle exec bin/delayed_job -p <%= fetch(:application) %> -i %i stop
+ExecReload = /bin/kill -HUP $MAINPID
+
+PIDFile = <%= shared_path %>/tmp/pids/delayed_job.%i.pid
+TimeoutStopSec = 22
+Restart = always
+
+User = app-user
+Group = app-group
+
+[Install]
+WantedBy = multi-user.target
+```
+
+#### `config/unicorn.rb`
+
+```ruby
+shared_path = "/path/to/shared"
+
+worker_processes   5
+listen             "#{shared_path}/tmp/sockets/unicorn.sock"
+pid                "#{shared_path}/tmp/pids/unicorn.pid"
+stderr_path        "#{shared_path}/log/unicorn_stderr.log"
+stdout_path        "#{shared_path}/log/unicorn_stdout.log"
+preload_app        true
+
+before_exec do |server|
+  ENV["BUNDLE_GEMFILE"] = "/path/to/current/Gemfile"
+end
+
+before_fork do |server, worker|
+  if defined? ActiveRecord::Base
+    ActiveRecord::Base.connection.disconnect!
+  end
+
+  old_pid = "#{server.config[:pid]}.oldbin"
+  if old_pid != server.pid
+    begin
+      sig = (worker.nr + 1) >= server.worker_processes ? :QUIT : :TTOU
+      Process.kill(sig, File.read(old_pid).to_i)
+    rescue Errno::ENOENT, Errno::ESRCH
+    end
+  end
+
+  sleep 1
+end
+
+after_fork do |server, worker|
+  if defined?(ActiveRecord::Base)
+    ActiveRecord::Base.establish_connection
+  end
+end
+```
 
 ## Development
 
