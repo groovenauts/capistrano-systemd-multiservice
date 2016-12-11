@@ -62,10 +62,14 @@ describe Capistrano::Systemd::MultiService do
       env.install_plugin subject, load_immediately: true
       env.set :application, "foo"
       env.set :tmp_dir, "/tmp"
-      env.set :systemd_example1_units_src, ["config/systemd/example1.service.erb"]
+      Dir.expects(:[]).with("config/systemd/example1{,@}.*.erb").returns(["config/systemd/example1.service.erb"]).at_most_once
     end
 
     describe "variables" do
+      it "systemd_example1_units_src" do
+        expect(env.fetch(:systemd_example1_units_src)).to eq ["config/systemd/example1.service.erb"]
+      end
+
       it "systemd_example1_units_dest" do
         expect(env.fetch(:systemd_example1_units_dest)).to eq ["/etc/systemd/system/foo_example1.service"]
       end
@@ -153,10 +157,14 @@ describe Capistrano::Systemd::MultiService do
       env.install_plugin subject, load_immediately: true
       env.set :application, "foo"
       env.set :tmp_dir, "/tmp"
-      env.set :systemd_example2_units_src, ["config/systemd/example2.service.erb", "config/systemd/example2@.service.erb"]
+      Dir.expects(:[]).with("config/systemd/example2{,@}.*.erb").returns(["config/systemd/example2.service.erb", "config/systemd/example2@.service.erb"]).at_most_once
     end
 
     describe "variables" do
+      it "systemd_example2_units_src" do
+        expect(env.fetch(:systemd_example2_units_src)).to eq ["config/systemd/example2.service.erb", "config/systemd/example2@.service.erb"]
+      end
+
       it "systemd_example2_units_dest" do
         expect(env.fetch(:systemd_example2_units_dest)).to eq ["/etc/systemd/system/foo_example2.service", "/etc/systemd/system/foo_example2@.service"]
       end
@@ -254,11 +262,15 @@ describe Capistrano::Systemd::MultiService do
       env.install_plugin subject, load_immediately: true
       env.set :application, "foo"
       env.set :tmp_dir, "/tmp"
-      env.set :systemd_example3_units_src, ["config/systemd/example3@.service.erb"]
       env.set :systemd_example3_instances, 3.times.to_a
+      Dir.expects(:[]).with("config/systemd/example3{,@}.*.erb").returns(["config/systemd/example3@.service.erb"]).at_most_once
     end
 
     describe "variables" do
+      it "systemd_example3_units_src" do
+        expect(env.fetch(:systemd_example3_units_src)).to eq ["config/systemd/example3@.service.erb"]
+      end
+
       it "systemd_example3_units_dest" do
         expect(env.fetch(:systemd_example3_units_dest)).to eq ["/etc/systemd/system/foo_example3@.service"]
       end
@@ -342,11 +354,15 @@ describe Capistrano::Systemd::MultiService do
       env.install_plugin subject, load_immediately: true
       env.set :application, "foo"
       env.set :tmp_dir, "/tmp"
-      env.set :systemd_example4_units_src, []
       env.set :systemd_example4_service, "example4.service"
+      Dir.expects(:[]).with("config/systemd/example4{,@}.*.erb").returns([]).at_most_once
     end
 
     describe "variables" do
+      it "systemd_example4_units_src" do
+        expect(env.fetch :systemd_example4_units_src).to eq []
+      end
+
       it "systemd_example4_units_dest" do
         expect(env.fetch(:systemd_example4_units_dest)).to eq []
       end
