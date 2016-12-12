@@ -64,7 +64,7 @@ module Capistrano
             fetch(:"#{prefix}_instances").map{|i|
               service_template = fetch(:"#{prefix}_units_dest").map{|dst| File.basename(dst) }.find{|f| f =~ /@\.service\z/ }
               service_template && service_template.sub(/@\.service\z/, "@#{i}.service")
-            }.flatten
+            }
           else
             []
           end
