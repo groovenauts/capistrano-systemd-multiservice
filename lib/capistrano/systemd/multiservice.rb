@@ -62,7 +62,8 @@ module Capistrano
         set_if_empty :"#{prefix}_instance_services", ->{
           if fetch(:"#{prefix}_instances")
             fetch(:"#{prefix}_instances").map{|i|
-              fetch(:"#{prefix}_units_dest").map{|dst| File.basename(dst) }.find{|f| f =~ /@\.service\z/ }&.sub(/@\.service\z/, "@#{i}.service")
+              service_template = fetch(:"#{prefix}_units_dest").map{|dst| File.basename(dst) }.find{|f| f =~ /@\.service\z/ }
+              service_template && service_template.sub(/@\.service\z/, "@#{i}.service")
             }.flatten
           else
             []
