@@ -11,7 +11,7 @@ Gem::Specification.new do |spec|
 
   spec.summary       = %q{Capistrano Plugin to control services by systemd}
   spec.description   = %q{Capistrano Plugin to control services by systemd}
-  spec.homepage      = "TODO: Put your gem's website or public repo URL here."
+  spec.homepage      = "https://github.com/groovenauts/capistrano-systemd-multiservice"
   spec.license       = "MIT"
 
   # Prevent pushing this gem to RubyGems.org. To allow pushes either set the 'allowed_push_host'
