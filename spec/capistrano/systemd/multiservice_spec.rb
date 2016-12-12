@@ -262,7 +262,7 @@ describe Capistrano::Systemd::MultiService do
       env.install_plugin subject, load_immediately: true
       env.set :application, "foo"
       env.set :tmp_dir, "/tmp"
-      env.set :systemd_example3_instances, 3.times.to_a
+      env.set :systemd_example3_instances, ["bar", "baz", "qux"]
       Dir.expects(:[]).with("config/systemd/example3{,@}.*.erb").returns(["config/systemd/example3@.service.erb"]).at_most_once
     end
 
@@ -276,11 +276,11 @@ describe Capistrano::Systemd::MultiService do
       end
 
       it "systemd_example3_service" do
-        expect(env.fetch(:systemd_example3_service)).to eq ["foo_example3@0.service", "foo_example3@1.service", "foo_example3@2.service"]
+        expect(env.fetch(:systemd_example3_service)).to eq ["foo_example3@bar.service", "foo_example3@baz.service", "foo_example3@qux.service"]
       end
 
       it "systemd_example3_instance_services" do
-        expect(env.fetch(:systemd_example3_instance_services)).to eq ["foo_example3@0.service", "foo_example3@1.service", "foo_example3@2.service"]
+        expect(env.fetch(:systemd_example3_instance_services)).to eq ["foo_example3@bar.service", "foo_example3@baz.service", "foo_example3@qux.service"]
       end
     end
 
@@ -323,7 +323,7 @@ describe Capistrano::Systemd::MultiService do
 
     describe "#restart" do
       it "should run systemctl restart foo_example3.service" do
-        backend.expects(:execute).with(:sudo, :systemctl, :restart, ["foo_example3@0.service", "foo_example3@1.service", "foo_example3@2.service"])
+        backend.expects(:execute).with(:sudo, :systemctl, :restart, ["foo_example3@bar.service", "foo_example3@baz.service", "foo_example3@qux.service"])
 
         subject.restart
       end
@@ -331,7 +331,7 @@ describe Capistrano::Systemd::MultiService do
 
     describe "#reload_or_restart" do
       it "should run systemctl reload-or-restart foo_example3.service" do
-        backend.expects(:execute).with(:sudo, :systemctl, :"reload-or-restart", ["foo_example3@0.service", "foo_example3@1.service", "foo_example3@2.service"])
+        backend.expects(:execute).with(:sudo, :systemctl, :"reload-or-restart", ["foo_example3@bar.service", "foo_example3@baz.service", "foo_example3@qux.service"])
 
         subject.reload_or_restart
       end
@@ -339,7 +339,7 @@ describe Capistrano::Systemd::MultiService do
 
     describe "#enable" do
       it "should run systemctl enable foo_example3.service" do
-        backend.expects(:execute).with(:sudo, :systemctl, :enable, ["foo_example3@0.service", "foo_example3@1.service", "foo_example3@2.service"])
+        backend.expects(:execute).with(:sudo, :systemctl, :enable, ["foo_example3@bar.service", "foo_example3@baz.service", "foo_example3@qux.service"])
 
         subject.enable
       end
