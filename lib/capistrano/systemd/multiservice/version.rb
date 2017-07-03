@@ -9,7 +9,7 @@ end
 module Capistrano
   module Systemd
     class MultiService < ::Capistrano::Plugin
-      VERSION = "0.1.0.beta1"
+      VERSION = "0.1.0.beta2"
     end
   end
 end
