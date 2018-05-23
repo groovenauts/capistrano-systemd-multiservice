@@ -30,8 +30,7 @@ install_plugin Capistrano::Systemd::MultiService.new("example1")
 install_plugin Capistrano::Systemd::MultiService.new("example2")
 ```
 
-And put `config/systemd/example1.service.erb` (and `config/systemd/example2.service.erb`, ...) like this
-(see [systemd.service(5)](https://www.freedesktop.org/software/systemd/man/systemd.service.html) for details) :
+And put `config/systemd/example1.service.erb` (and `config/systemd/example2.service.erb`, ...) like this:
 
 ```
 [Unit]
@@ -48,6 +47,9 @@ Group = examplegroup
 [Install]
 WantedBy = multi-user.target
 ```
+
+ * see [systemd.service(5)](https://www.freedesktop.org/software/systemd/man/systemd.service.html) for details
+ * when `:application` is set to `foo`, this file will be installed as `foo_example1.service` (and `foo_example2.service`, ...)
 
 And add these lines to config/deploy.rb if you want to reload/restart services on deploy:
 
@@ -121,6 +123,10 @@ install_plugin Capistrano::Systemd::MultiService.new('delayed_job')
 ```ruby
 ## ...snip...
 
+set :application, 'foo'
+
+## ...snip...
+
 set :systemd_delayed_job_instances, ->{ 3.times.to_a }
 
 after 'deploy:restart', 'systemd:unicorn:reload-or-restart'
@@ -132,6 +138,8 @@ after 'deploy:publishing', 'deploy:restart'
 ```
 
 #### `config/systemd/unicorn.service.erb`
+
+This file will be installed as `foo_unicorn.service`.
 
 ```
 [Unit]
@@ -164,6 +172,8 @@ WantedBy = multi-user.target
 
 #### `config/systemd/delayed_job.service.erb`
 
+This file will be installed as `foo_delayed_job.service`.
+
 ```
 [Unit]
 Description = <%= fetch(:application) %> delayed_job
@@ -180,6 +190,10 @@ WantedBy = multi-user.target
 ```
 
 #### `config/systemd/delayed_job@.service.erb`
+
+This file will be installed as `foo_delayed_job@.service`, and creates 3 instanced service units
+`foo_delayed_job@0.service`, `foo_delayed_job@1.service`, `foo_delayed_job@2.service`
+because `:systemd_delayed_job_instances` is set to `->{ 3.times.to_a }` in `config/deploy.rb`.
 
 ```
 [Unit]
@@ -251,6 +265,16 @@ after_fork do |server, worker|
     ActiveRecord::Base.establish_connection
   end
 end
+```
+
+#### Commands to setup systemd services and deploy
+
+```shell
+# Upload and install systemd service unit files before deploy
+cap STAGE systemd:unicorn:setup systemd:delayed_job:setup
+
+# Deploy as usual
+cap STAGE deploy
 ```
 
 ## Development
