@@ -192,7 +192,7 @@ WantedBy = multi-user.target
 #### `config/systemd/delayed_job@.service.erb`
 
 This file will be installed as `foo_delayed_job@.service`, and creates 3 instanced service units
-`foo_delayed_job@0.service`, `foo_delayed_job@0.service`, `foo_delayed_job@0.service`
+`foo_delayed_job@0.service`, `foo_delayed_job@1.service`, `foo_delayed_job@2.service`
 because `:systemd_delayed_job_instances` is set to `->{ 3.times.to_a }` in `config/deploy.rb`.
 
 ```
