@@ -253,6 +253,16 @@ after_fork do |server, worker|
 end
 ```
 
+#### Commands to setup systemd services and deploy
+
+```shell
+# Upload and install systemd service unit files before deploy
+cap STAGE systemd:unicorn:setup systemd:delayed_job:setup
+
+# Deploy as usual
+cap STAGE deploy
+```
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
