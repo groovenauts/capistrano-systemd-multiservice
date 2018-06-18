@@ -38,7 +38,7 @@ module Capistrano
 
           set_if_empty :"#{prefix}_units_src", ->{ Dir["config/systemd/#{@app}{,@}.*.erb"].sort }
 
-          set_if_empty :"#{prefix}_units_dir", ->{ "/etc/systemd/system" }
+          set_if_empty :"#{prefix}_units_dir", ->{ default_units_dir }
 
           set_if_empty :"#{prefix}_units_dest", ->{
             fetch(:"#{prefix}_units_src").map{|src|
@@ -73,10 +73,8 @@ module Capistrano
 
         def setup
           fetch(:"#{prefix}_units_src").zip(fetch(:"#{prefix}_units_dest")).each do |src, dest|
-            remote_tmp  = "#{fetch(:tmp_dir)}/#{File.basename(src, ".erb")}"
-            backend.upload! StringIO.new(ERB.new(File.read(src), nil, 2).result(binding)), remote_tmp
-            backend.sudo :install, '-m 644 -o root -g root -D', remote_tmp, dest
-            backend.execute :rm, remote_tmp
+            buf = StringIO.new(ERB.new(File.read(src), nil, 2).result(binding))
+            setup_service buf, src, dest
           end
         end
 
@@ -106,6 +104,19 @@ module Capistrano
         def systemctl(*args)
           args.unshift :sudo, :systemctl
           backend.execute(*args)
+        end
+
+        def default_units_dir
+          "/etc/systemd/system"
+        end
+
+        private
+
+        def setup_service(buf, src, dest)
+          remote_tmp  = "#{fetch(:tmp_dir)}/#{File.basename(src, ".erb")}"
+          backend.upload! buf, remote_tmp
+          backend.sudo :install, '-m 644 -o root -g root -D', remote_tmp, dest
+          backend.execute :rm, remote_tmp
         end
       end
     end
