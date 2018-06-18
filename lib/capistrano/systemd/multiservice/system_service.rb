@@ -22,7 +22,7 @@ module Capistrano
         end
 
         def define_tasks
-          eval_rakefile File.expand_path("../../../tasks/systemd/multiservice.rake", __FILE__)
+          eval_rakefile File.expand_path("../../../tasks/systemd/multiservice/system_service.rake", __FILE__)
         end
 
         def register_hooks
