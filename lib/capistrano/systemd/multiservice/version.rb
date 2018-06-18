@@ -1,14 +1,6 @@
-begin
-  require "capistrano/plugin"
-rescue LoadError
-  module Capistrano
-    class Plugin; end
-  end
-end
-
 module Capistrano
   module Systemd
-    class MultiService < ::Capistrano::Plugin
+    module MultiService
       VERSION = "0.1.0.beta5"
     end
   end
