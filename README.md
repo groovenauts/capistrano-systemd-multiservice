@@ -26,8 +26,8 @@ Add these lines to your Capfile:
 
 ```ruby
 require "capistrano/systemd/multiservice"
-install_plugin Capistrano::Systemd::MultiService.new("example1")
-install_plugin Capistrano::Systemd::MultiService.new("example2")
+install_plugin Capistrano::Systemd::MultiService.new_service("example1")
+install_plugin Capistrano::Systemd::MultiService.new_service("example2")
 ```
 
 And put `config/systemd/example1.service.erb` (and `config/systemd/example2.service.erb`, ...) like this:
@@ -70,7 +70,7 @@ cap STAGE deploy
 
 ## Capistrano Tasks
 
-With `install_plugin Capistrano::Systemd::MultiService.new("example1")`,
+With `install_plugin Capistrano::Systemd::MultiService.new_service("example1")`,
 following tasks are defined.
 
 - `systemd:example1:setup`
@@ -85,11 +85,11 @@ following tasks are defined.
 - `systemd:example1:enable`
 - `systemd:example1:disable`
 
-See lib/capistrano/tasks/systemd/multiservice.rake, lib/capistrano/systemd/multiservice.rb for details.
+See lib/capistrano/tasks/systemd/multiservice/system\_service.rake, lib/capistrano/systemd/multiservice/system\_service.rb for details.
 
 ## Configuration Variables
 
-With `install_plugin Capistrano::Systemd::MultiService.new("example1")`,
+With `install_plugin Capistrano::Systemd::MultiService.new_service("example1")`,
 following Configuration variables are defined.
 
 - `:systemd_example1_role`
@@ -100,7 +100,7 @@ following Configuration variables are defined.
 - `:systemd_example1_service`
 - `:systemd_example1_instance_services`
 
-See lib/capistrano/systemd/multiservice.rb for details.
+See lib/capistrano/systemd/multiservice/system\_service.rb for details.
 
 ## Examples
 
@@ -112,8 +112,8 @@ See lib/capistrano/systemd/multiservice.rb for details.
 ## ...snip...
 
 require 'capistrano/systemd/multiservice'
-install_plugin Capistrano::Systemd::MultiService.new('unicorn')
-install_plugin Capistrano::Systemd::MultiService.new('delayed_job')
+install_plugin Capistrano::Systemd::MultiService.new_service('unicorn')
+install_plugin Capistrano::Systemd::MultiService.new_service('delayed_job')
 
 ## ...snip...
 ```
