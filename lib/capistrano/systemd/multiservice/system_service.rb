@@ -71,6 +71,10 @@ module Capistrano
           }
         end
 
+        def default_units_dir
+          "/etc/systemd/system"
+        end
+
         def setup
           fetch(:"#{prefix}_units_src").zip(fetch(:"#{prefix}_units_dest")).each do |src, dest|
             buf = StringIO.new(ERB.new(File.read(src), nil, 2).result(binding))
@@ -104,10 +108,6 @@ module Capistrano
         def systemctl(*args)
           args.unshift :sudo, :systemctl
           backend.execute(*args)
-        end
-
-        def default_units_dir
-          "/etc/systemd/system"
         end
 
         private

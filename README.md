@@ -68,6 +68,20 @@ cap STAGE systemd:example1:setup systemd:example2:setup
 cap STAGE deploy
 ```
 
+### User services
+
+To have the service installed under your own user rather than root
+
+```ruby
+require "capistrano/systemd/multiservice"
+install_plugin Capistrano::Systemd::MultiService.new_service("example1", service_type: 'user')
+install_plugin Capistrano::Systemd::MultiService.new_service("example2", service_type: 'user')
+```
+
+If using the user service type services will be installed in your users home directory under ``` /.config/systemd/user ```.
+Systemd commands on those services can be run by passing a `--user` flag, e.g. ```systemctl --user list-unit-files```
+Nothing else in setup should require change and Capistrano tasks should remain the same as when installing system services.
+
 ## Capistrano Tasks
 
 With `install_plugin Capistrano::Systemd::MultiService.new_service("example1")`,
