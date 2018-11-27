@@ -9,7 +9,7 @@ module Capistrano
           backend.execute(*args)
         end
 
-        def remove
+        def remove(_server)
           backend.execute :rm, '-f', '--', fetch(:"#{prefix}_units_dest")
         end
 

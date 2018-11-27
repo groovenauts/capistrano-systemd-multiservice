@@ -75,18 +75,18 @@ module Capistrano
           "/etc/systemd/system"
         end
 
-        def setup
+        def setup(server)
           fetch(:"#{prefix}_units_src").zip(fetch(:"#{prefix}_units_dest")).each do |src, dest|
             buf = StringIO.new(ERB.new(File.read(src), nil, 2).result(binding))
             setup_service buf, src, dest
           end
         end
 
-        def remove
+        def remove(_server)
           backend.sudo :rm, '-f', '--', fetch(:"#{prefix}_units_dest")
         end
 
-        def validate
+        def validate(_server)
           fetch(:"#{prefix}_units_dest").each do |dest|
             unless backend.test("[ -f #{dest} ]")
               backend.error "#{dest} not found"
@@ -95,12 +95,12 @@ module Capistrano
           end
         end
 
-        def daemon_reload
+        def daemon_reload(_server)
           systemctl :"daemon-reload"
         end
 
         %i[start stop reload restart reload-or-restart enable disable].each do |act|
-          define_method act.to_s.tr('-','_') do
+          define_method act.to_s.tr('-','_') do |_server|
             systemctl act, fetch(:"#{prefix}_service")
           end
         end

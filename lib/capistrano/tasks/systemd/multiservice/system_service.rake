@@ -18,8 +18,8 @@ namespace :systemd do
     }.each do |task_name, desc_template|
       desc(desc_template % { app: svc.app, task_name: task_name})
       task task_name do
-        on roles(fetch(:"#{svc.prefix}_role")) do
-          svc.__send__ task_name.to_s.tr('-', '_')
+        on roles(fetch(:"#{svc.prefix}_role")) do |server|
+          svc.__send__ task_name.to_s.tr('-', '_'), server
         end
       end
     end
