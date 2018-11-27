@@ -1,6 +1,8 @@
 RSpec.shared_context 'with config/systemd/example3@.service.erb' do
   subject { described_class.new("example3") }
 
+  let(:server) { env.server "1.2.3.4", roles: %w{all}, server_property: 42 }
+
   before do
     env.install_plugin subject, load_immediately: true
     env.set :systemd_example3_instances, ["bar", "baz", "qux"]
@@ -29,14 +31,14 @@ RSpec.shared_context 'with config/systemd/example3@.service.erb' do
     it "does not exit if unit file exist" do
       backend.expects(:test).with("[ -f #{systemd_dir}/foo_example3@.service ]").returns(true)
 
-      subject.validate
+      subject.validate(server)
     end
 
     it "exit if unit file does not exist" do
       backend.expects(:test).with("[ -f #{systemd_dir}/foo_example3@.service ]").returns(false)
       backend.expects(:error).with("#{systemd_dir}/foo_example3@.service not found")
 
-      expect{ subject.validate }.to raise_error SystemExit
+      expect{ subject.validate(server) }.to raise_error SystemExit
     end
   end
 
@@ -45,7 +47,7 @@ RSpec.shared_context 'with config/systemd/example3@.service.erb' do
       command = systemctl_command + [:restart, ["foo_example3@bar.service", "foo_example3@baz.service", "foo_example3@qux.service"]]
       backend.expects(:execute).with(*command)
 
-      subject.restart
+      subject.restart(server)
     end
   end
 
@@ -54,7 +56,7 @@ RSpec.shared_context 'with config/systemd/example3@.service.erb' do
       command = systemctl_command + [:"reload-or-restart", ["foo_example3@bar.service", "foo_example3@baz.service", "foo_example3@qux.service"]]
       backend.expects(:execute).with(*command)
 
-      subject.reload_or_restart
+      subject.reload_or_restart(server)
     end
   end
 
@@ -63,7 +65,7 @@ RSpec.shared_context 'with config/systemd/example3@.service.erb' do
       command = systemctl_command + [:enable, ["foo_example3@bar.service", "foo_example3@baz.service", "foo_example3@qux.service"]]
       backend.expects(:execute).with(*command)
 
-      subject.enable
+      subject.enable(server)
     end
   end
 end

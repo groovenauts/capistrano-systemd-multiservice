@@ -1,6 +1,8 @@
 RSpec.shared_context "with config/systemd/example2.service.erb, example2@.service.erb" do
   subject { described_class.new("example2") }
 
+  let(:server) { env.server "1.2.3.4", roles: %w{all}, server_property: 42 }
+
   before do
     env.install_plugin subject, load_immediately: true
     Dir.expects(:[]).with("config/systemd/example2{,@}.*.erb").returns(["config/systemd/example2.service.erb", "config/systemd/example2@.service.erb"]).at_most_once
@@ -33,7 +35,7 @@ RSpec.shared_context "with config/systemd/example2.service.erb, example2@.servic
       backend.expects(:test).with("[ -f #{systemd_dir}/foo_example2.service ]").returns(true)
       backend.expects(:test).with("[ -f #{systemd_dir}/foo_example2@.service ]").returns(true)
 
-      subject.validate
+      subject.validate(server)
     end
 
     it "exit if unit file does not exist" do
@@ -41,7 +43,7 @@ RSpec.shared_context "with config/systemd/example2.service.erb, example2@.servic
       backend.expects(:test).with("[ -f #{systemd_dir}/foo_example2@.service ]").returns(false)
       backend.expects(:error).with("#{systemd_dir}/foo_example2@.service not found")
 
-      expect{ subject.validate }.to raise_error SystemExit
+      expect{ subject.validate(server) }.to raise_error SystemExit
     end
   end
 
@@ -50,7 +52,7 @@ RSpec.shared_context "with config/systemd/example2.service.erb, example2@.servic
       command = systemctl_command + [:restart, "foo_example2.service"]
       backend.expects(:execute).with(*command)
 
-      subject.restart
+      subject.restart(server)
     end
   end
 
@@ -59,7 +61,7 @@ RSpec.shared_context "with config/systemd/example2.service.erb, example2@.servic
       command = systemctl_command + [:"reload-or-restart", "foo_example2.service"]
       backend.expects(:execute).with(*command)
 
-      subject.reload_or_restart
+      subject.reload_or_restart(server)
     end
   end
 
@@ -68,7 +70,7 @@ RSpec.shared_context "with config/systemd/example2.service.erb, example2@.servic
       command = systemctl_command + [:enable, "foo_example2.service"]
       backend.expects(:execute).with(*command)
 
-      subject.enable
+      subject.enable(server)
     end
   end
 end

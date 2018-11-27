@@ -19,7 +19,7 @@ describe Capistrano::Systemd::MultiService::UserService do
 
         backend.expects(:upload!).with(buf, "/home/user/.config/systemd/user/foo_example1.service")
 
-        subject.setup
+        subject.setup(server)
       end
     end
 
@@ -27,7 +27,7 @@ describe Capistrano::Systemd::MultiService::UserService do
       it "should uninstall unit file" do
         backend.expects(:execute).with(:rm, '-f', '--', ["/home/user/.config/systemd/user/foo_example1.service"])
 
-        subject.remove
+        subject.remove(server)
       end
     end
   end
@@ -49,7 +49,7 @@ describe Capistrano::Systemd::MultiService::UserService do
 
         backend.expects(:upload!).with(buf2, "/home/user/.config/systemd/user/foo_example2@.service")
 
-        subject.setup
+        subject.setup(server)
       end
     end
 
@@ -57,7 +57,7 @@ describe Capistrano::Systemd::MultiService::UserService do
       it "should uninstall unit file" do
         backend.expects(:execute).with(:rm, '-f', '--', ["/home/user/.config/systemd/user/foo_example2.service", "/home/user/.config/systemd/user/foo_example2@.service"])
 
-        subject.remove
+        subject.remove(server)
       end
     end
   end
@@ -73,7 +73,7 @@ describe Capistrano::Systemd::MultiService::UserService do
 
         backend.expects(:upload!).with(buf2, "#{systemd_dir}/foo_example3@.service")
 
-        subject.setup
+        subject.setup(server)
       end
     end
 
@@ -81,7 +81,7 @@ describe Capistrano::Systemd::MultiService::UserService do
       it "should uninstall unit file" do
         backend.expects(:execute).with(:rm, '-f', '--', ["#{systemd_dir}/foo_example3@.service"])
 
-        subject.remove
+        subject.remove(server)
       end
     end
   end

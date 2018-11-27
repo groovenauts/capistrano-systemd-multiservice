@@ -19,7 +19,7 @@ describe Capistrano::Systemd::MultiService::SystemService do
         backend.expects(:sudo).with(:install, "-m 644 -o root -g root -D", "/tmp/example1.service", "/etc/systemd/system/foo_example1.service")
         backend.expects(:execute).with(:rm, "/tmp/example1.service")
 
-        subject.setup
+        subject.setup(server)
       end
     end
 
@@ -27,7 +27,7 @@ describe Capistrano::Systemd::MultiService::SystemService do
       it "should uninstall unit file" do
         backend.expects(:sudo).with(:rm, '-f', '--', ["/etc/systemd/system/foo_example1.service"])
 
-        subject.remove
+        subject.remove(server)
       end
     end
   end
@@ -53,7 +53,7 @@ describe Capistrano::Systemd::MultiService::SystemService do
         backend.expects(:sudo).with(:install, "-m 644 -o root -g root -D", "/tmp/example2@.service", "/etc/systemd/system/foo_example2@.service")
         backend.expects(:execute).with(:rm, "/tmp/example2@.service")
 
-        subject.setup
+        subject.setup(server)
       end
     end
 
@@ -61,7 +61,7 @@ describe Capistrano::Systemd::MultiService::SystemService do
       it "should uninstall unit file" do
         backend.expects(:sudo).with(:rm, '-f', '--', ["/etc/systemd/system/foo_example2.service", "/etc/systemd/system/foo_example2@.service"])
 
-        subject.remove
+        subject.remove(server)
       end
     end
   end
@@ -79,7 +79,7 @@ describe Capistrano::Systemd::MultiService::SystemService do
         backend.expects(:sudo).with(:install, "-m 644 -o root -g root -D", "/tmp/example3@.service", "/etc/systemd/system/foo_example3@.service")
         backend.expects(:execute).with(:rm, "/tmp/example3@.service")
 
-        subject.setup
+        subject.setup(server)
       end
     end
 
@@ -87,7 +87,7 @@ describe Capistrano::Systemd::MultiService::SystemService do
       it "should uninstall unit file" do
         backend.expects(:sudo).with(:rm, '-f', '--', ["/etc/systemd/system/foo_example3@.service"])
 
-        subject.remove
+        subject.remove(server)
       end
     end
   end

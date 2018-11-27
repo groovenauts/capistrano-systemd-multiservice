@@ -3,6 +3,7 @@ RSpec.shared_context "setup" do
 
   # This allows us to easily use `set`, `fetch`, etc. in the examples.
   let(:env){ Capistrano::Configuration.env }
+  let(:server) { env.server "1.2.3.4", roles: %w{all}, server_property: 42 }
 
   # Stub the SSHKit backend so we can set up expectations without the plugin
   # actually executing any commands.
@@ -48,7 +49,7 @@ RSpec.shared_context "setup" do
       command = systemctl_command + [:"daemon-reload"]
       backend.expects(:execute).with(*command)
 
-      subject.daemon_reload
+      subject.daemon_reload(server)
     end
   end
 end

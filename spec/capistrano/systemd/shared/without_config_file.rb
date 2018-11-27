@@ -3,6 +3,8 @@ RSpec.shared_examples name do
   context name do
     subject { described_class.new("example4") }
 
+    let(:server) { env.server "1.2.3.4", roles: %w{all}, server_property: 42 }
+
     before do
       env.install_plugin subject, load_immediately: true
       env.set :systemd_example4_service, "example4.service"
@@ -33,7 +35,7 @@ RSpec.shared_examples name do
 
     describe "#validate" do
       it do
-        expect{ subject.validate }.not_to raise_error
+        expect{ subject.validate(server) }.not_to raise_error
       end
     end
 
@@ -42,7 +44,7 @@ RSpec.shared_examples name do
         command = systemctl_command + [:restart, "example4.service"]
         backend.expects(:execute).with(*command)
 
-        subject.restart
+        subject.restart(server)
       end
     end
 
@@ -51,7 +53,7 @@ RSpec.shared_examples name do
         command = systemctl_command + [:"reload-or-restart", "example4.service"]
         backend.expects(:execute).with(*command)
 
-        subject.reload_or_restart
+        subject.reload_or_restart(server)
       end
     end
 
@@ -60,7 +62,7 @@ RSpec.shared_examples name do
         command = systemctl_command + [:enable, "example4.service"]
         backend.expects(:execute).with(*command)
 
-        subject.enable
+        subject.enable(server)
       end
     end
   end
