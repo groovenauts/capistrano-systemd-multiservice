@@ -1,0 +1,33 @@
+#
+# https://help.github.com/en/actions/automating-your-workflow-with-github-actions
+#
+
+name: CI
+
+on:
+  push:
+    branches:
+      - '**'
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        ruby-version: [2.6, 2.7, 3.0]
+      fail-fast: false
+    if: "!contains(github.event.head_commit.message, '[ci skip]')"
+    steps:
+      # https://github.com/actions/checkout
+      - uses: actions/checkout@v2
+
+      # https://github.com/ruby/setup-ruby
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby-version }}
+          bundler-cache: true
+
+      - name: Test
+        run: bundle exec rake spec
+

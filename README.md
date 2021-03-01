@@ -1,6 +1,6 @@
 # capistrano-systemd-multiservice
 
-[![Gem Version](https://badge.fury.io/rb/capistrano-systemd-multiservice.png)](https://rubygems.org/gems/capistrano-systemd-multiservice) [![Build Status](https://secure.travis-ci.org/groovenauts/capistrano-systemd-multiservice.png)](https://travis-ci.org/groovenauts/capistrano-systemd-multiservice)
+[![Gem Version](https://badge.fury.io/rb/capistrano-systemd-multiservice.png)](https://rubygems.org/gems/capistrano-systemd-multiservice) [![CI](https://github.com/groovenauts/capistrano-systemd-multiservice/actions/workflows/ci.yml/badge.svg)](https://github.com/groovenauts/capistrano-systemd-multiservice/actions/workflows/ci.yml)
 
 This gem adds capistrano tasks to control multiple services with systemd.
 
