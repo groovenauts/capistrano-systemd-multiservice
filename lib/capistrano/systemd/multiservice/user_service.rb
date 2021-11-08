@@ -20,6 +20,7 @@ module Capistrano
         protected
 
         def setup_service(buf, src, dest)
+          backend.execute :loginctl, 'enable-linger'          
           backend.upload! buf, dest
         end
       end
