@@ -20,6 +20,7 @@ module Capistrano
         protected
 
         def setup_service(buf, src, dest)
+          backend.execute :mkdir, '-p', fetch(:"#{prefix}_units_dir") 
           backend.execute :loginctl, 'enable-linger'          
           backend.upload! buf, dest
         end
