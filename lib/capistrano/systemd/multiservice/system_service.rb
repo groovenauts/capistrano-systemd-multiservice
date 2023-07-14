@@ -42,7 +42,7 @@ module Capistrano
 
           set_if_empty :"#{prefix}_units_dest", ->{
             fetch(:"#{prefix}_units_src").map{|src|
-              "%s/%s_%s" % [ fetch(:"#{prefix}_units_dir"), fetch(:application), File.basename(src, ".erb") ]
+              "%s/%s_%s-%s" % [ fetch(:"#{prefix}_units_dir"), fetch(:application),  fetch(:stage), File.basename(src, ".erb") ]
             }
           }
 
